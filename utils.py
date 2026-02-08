@@ -6,7 +6,7 @@
 #    By: aurele <aurele@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/02/05 19:36:23 by aurele            #+#    #+#              #
-#    Updated: 2026/02/08 11:32:23 by aurele           ###   ########.fr        #
+#    Updated: 2026/02/08 12:09:28 by aurele           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -48,6 +48,29 @@ class SemanticPromptGenerator:
                 "vehicles"
             ]
         }
+        self.environment_vocabulary = {
+            "weather": [
+                "foggy conditions",
+                "light rain",
+                "clear weather",
+                "sunny conditions"
+            ],
+            "visibility": [
+                "high visibility",
+                "reduced visibility",
+                "low visibility"
+            ],
+            "time_of_day": [
+                "daytime",
+                "nighttime"
+            ],
+            "lighting": [
+                "soft daylight",
+                "strong sunlight",
+                "diffuse lighting",
+                "low-light conditions"
+            ]
+        }
         self.semantic_coverage_ranges = {
             "vegetation_forest": (35, 55),
             "roads_ground": (20, 35),
@@ -73,6 +96,14 @@ class SemanticPromptGenerator:
     def _sample_coverage_phrase(self, percentage):
         pattern = random.choice(self.coverage_patterns)
         return pattern.format(p=percentage)
+    
+    def _generate_environment_prompt(self):
+        weather = random.choice(self.environment_vocabulary["weather"])
+        visibility = random.choice(self.environment_vocabulary["visibility"])
+        time_of_day = random.choice(self.environment_vocabulary["time_of_day"])
+        lighting = random.choice(self.environment_vocabulary["lighting"])
+
+        return f"under {weather}, with {visibility}, during {time_of_day} and {lighting}"
 
     def generate_prompt(self):
         components = []
@@ -85,4 +116,12 @@ class SemanticPromptGenerator:
 
             components.append(f"{vocab} {coverage_phrase}")
 
-        return "Semantic background composed of " + ", ".join(components) + "."
+        environment = self._generate_environment_prompt()
+
+        return (
+            "Semantic background composed of "
+            + ", ".join(components)
+            + ", "
+            + environment
+            + "."
+        )
